@@ -4,13 +4,7 @@ import akka.actor.{ Actor, ActorRef, FSM }
 import scala.concurrent.duration._
 
 
-
-
-
-
 class ProcessInfo(val name: String, val ref: ActorRef, val period: Int)
-
-
 
 object Scheduler {	
     sealed trait State
