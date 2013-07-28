@@ -18,6 +18,7 @@ class KnowledgeRepository(var knowledge: Map[String, AnyVal]) extends Actor {
     case r: Knowledge.Request => 
       log.info("For Knowledge.Request for :" + r.knowledge.mkString)
       sender ! Knowledge.Response(knowledge.filterKeys(r.knowledge.contains))
+      
     case u: Knowledge.Update => 
       log.info("For Knowledge.Update with :" + u.knowledge.mkString)
       knowledge = knowledge ++ u.knowledge;

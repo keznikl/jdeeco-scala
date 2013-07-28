@@ -6,7 +6,11 @@ import scala.concurrent.duration._
 
 object Process {	
 	sealed trait State
+	case object Idle extends Process.State
+	case object WaitingForKnowledge extends Process.State
+    
 	sealed trait Data
+	case object Empty extends Process.Data
 }
 
 
@@ -17,25 +21,20 @@ class Process(
     val fn: Map[String, AnyVal] => Map[String, AnyVal]
     ) extends Actor with FSM[Process.State, Process.Data] {
   
-  private case object Idle extends Process.State
-  private case object WaitingForKnowledge extends Process.State
+  startWith(Process.Idle, Process.Empty)
 
-  private case object Empty extends Process.Data  
-    
-  startWith(Idle, Empty)
-
-  when(Idle) {
+  when(Process.Idle) {
     case Event(Scheduler.Tick, _) =>
       log.info("Got Scheduler.Tick")
       kRepository ! new Knowledge.Request(in)
-      goto(WaitingForKnowledge)
+      goto(Process.WaitingForKnowledge)
   }
   
-  when(WaitingForKnowledge) {
+  when(Process.WaitingForKnowledge) {
     case Event(Knowledge.Response(knowledge), _) =>
       log.info("Got Knowledge.Response")
       kRepository ! new Knowledge.Update(fn(knowledge))
-      goto(Idle)
+      goto(Process.Idle)
   }
 
   initialize()
