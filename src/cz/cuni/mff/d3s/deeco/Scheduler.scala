@@ -3,22 +3,52 @@ package cz.cuni.mff.d3s.deeco
 import akka.actor.{ Actor, ActorRef, FSM }
 import scala.concurrent.duration._
 
+/**
+ * A class representing the information about a process as required by the scheduler.
+ */
+class ProcessInfo(
+    /** Name of the process. */
+    val name: String, 
+    /** Ref. to the process's actor. */
+    val ref: ActorRef, 
+    /** Period of the process in miliseconds. */
+    val period: Int)
 
-class ProcessInfo(val name: String, val ref: ActorRef, val period: Int)
+/** Associated Scheduler definitions. */
+object Scheduler {
+  // The states of the Scheduler FSM
+  sealed trait State
+  case object Idle extends State
+  case object Active extends State
 
-object Scheduler {	
-    sealed trait State
-    case object Idle extends Scheduler.State
-    case object Active extends Scheduler.State
+  sealed trait Data
   
-	sealed trait Data
-
-	case object Start
-	case object Stop
-	case object Tick
+  // Messages used for interacting with the Scheduler actor
+  case object Start
+  case object Stop
+  case object Tick
 }
 
-class Scheduler(var processes: List[ProcessInfo]) extends Actor with FSM[Scheduler.State, Scheduler.Data] {
+/**
+ * The actor representing the process scheduler.
+ * 
+ * Receives: Scheduler.Start, Scheduler.Stop
+ * Sends:    Scheduler.Tick
+ * 
+ * FSM:
+ * - Idle: 
+ *   Inactive, waits for Scheduler.Start, after that sets a timer for each registered process. 
+ *   Then goto Active
+ * - Active: 
+ *   Processes time notifications and sends Scheduler.Tick to the corresponding process actors.
+ *   After receiving Scheduler.Stop, stop all timers and goto Idle 
+ *   
+ *   @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ */
+class Scheduler(
+    /** The processes to be scheduled */
+    var processes: List[ProcessInfo]
+  ) extends Actor with FSM[Scheduler.State, Scheduler.Data] {
 
   
   protected case object Empty extends Scheduler.Data  
