@@ -1,0 +1,10 @@
+Requires:
+Scala 2.10
+ScalaIDE for Eclipse
+ScalaTest 2.x
+
+Execution:
+- Demo:
+  src/demo.LeaderFollower -> Run As -> Scala Application
+- Tests:
+  test/cz.cuni.mff.d3s.deeco -> Run As -> ScalaTest - Package
