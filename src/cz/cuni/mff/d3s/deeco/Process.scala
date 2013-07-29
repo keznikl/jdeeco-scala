@@ -26,16 +26,23 @@ class Process(
   when(Process.Idle) {
     case Event(Scheduler.Tick, _) =>
       log.info("Got Scheduler.Tick")
+      
       kRepository ! new Knowledge.Request(in)
-      log.info("Sent Knowledge.Request requesting {" + in.mkString(", ") + "}")
+      
+      log.info("Sent Knowledge.Request requesting " + in.mkString)
+      
       goto(Process.WaitingForKnowledge)
   }
   
   when(Process.WaitingForKnowledge) {
     case Event(Knowledge.Response(knowledge), _) =>
-      log.info("Got Knowledge.Response")
-      kRepository ! new Knowledge.Update(
-          fn(knowledge.filterKeys(in.contains)).filterKeys(out.contains))
+      log.info("Got Knowledge.Response with " + knowledge.mkString)
+      
+      val result = fn(knowledge.filterKeys(in.contains)).filterKeys(out.contains);      
+      kRepository ! new Knowledge.Update(result)
+      
+      log.info("Sent Knowledge.Update with " + result.mkString)
+      
       goto(Process.Idle)
   }
 

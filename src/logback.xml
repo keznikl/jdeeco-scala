@@ -1,0 +1,26 @@
+<configuration>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender" level="WARNING">
+	<encoder>
+	  <pattern>%date{ISO8601} %-5level %logger{36} %X{sourceThread} - %msg%n</pattern>
+	</encoder>
+  </appender>
+  
+  <logger name="LeaderFollower" level="WARNING" additivity="false">
+    <appender-ref ref="STDOUT" />
+  </logger>
+  
+  
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>LeaderFollower.log</file>
+    <append>true</append>
+    <!-- encoders are assigned the type
+         ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <encoder>
+      <pattern>%-4relative [%thread] %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="DEBUG">
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>
