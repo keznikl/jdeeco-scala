@@ -31,8 +31,8 @@ class KnowledgeRepositoryTest(_system: ActorSystem) extends TestKit(_system) wit
     
     "update its knowledge if sent a Knowledge.Update" in {
       val s = TestActorRef(new KnowledgeRepository(Map("1" -> 1, "2" -> 2)))
-      s ! Knowledge.Update(Map("1" -> 3))
-      s.underlyingActor.knowledge("1") should be (3)
+      s ! Knowledge.Update(Map("1" -> 3, "4" -> 4))
+      s.underlyingActor.knowledge should be (Map("1" -> 3, "2" -> 2, "4" -> 4))
     }
   }
   

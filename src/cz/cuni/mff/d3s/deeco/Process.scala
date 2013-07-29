@@ -27,13 +27,15 @@ class Process(
     case Event(Scheduler.Tick, _) =>
       log.info("Got Scheduler.Tick")
       kRepository ! new Knowledge.Request(in)
+      log.info("Sent Knowledge.Request requesting {" + in.mkString(", ") + "}")
       goto(Process.WaitingForKnowledge)
   }
   
   when(Process.WaitingForKnowledge) {
     case Event(Knowledge.Response(knowledge), _) =>
       log.info("Got Knowledge.Response")
-      kRepository ! new Knowledge.Update(fn(knowledge))
+      kRepository ! new Knowledge.Update(
+          fn(knowledge.filterKeys(in.contains)).filterKeys(out.contains))
       goto(Process.Idle)
   }
 
