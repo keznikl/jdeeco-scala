@@ -32,8 +32,9 @@ class ProcessTest(_system: ActorSystem) extends TestKit(_system) with ImplicitSe
       p.stateName should be(Process.WaitingForKnowledge) 
     }
     
-    "be in the Idle state after receiving the Knowledge.Response knowledge" in {
+    "be in the Idle state after receiving the Knowledge.Response knowledge in the WaitingForKnowledge state" in {
       val p = TestFSMRef(new Process(dummy, List(), List(), identity))
+      p.setState(Process.WaitingForKnowledge)
       p ! Knowledge.Response(Map())
       p.stateName should be(Process.Idle)      
     }
