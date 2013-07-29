@@ -19,7 +19,7 @@ object Knowledge {
  * Receives: Knowledge.Request, Knowledge.Update
  * Sends:    Knowledge.Response
  * 
- *   @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  */
 class KnowledgeRepository(
     /** The contents of the knowledge repository. */

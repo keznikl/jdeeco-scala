@@ -29,7 +29,7 @@ object Process {
  *   process's body and sends the output as Knowledge.Update
  *   Then goto Idle 
  *   
- *   @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  */
 class Process(
     /** An actor representing the knowledge repository */

@@ -43,7 +43,7 @@ object Scheduler {
  *   Processes time notifications and sends Scheduler.Tick to the corresponding process actors.
  *   After receiving Scheduler.Stop, stop all timers and goto Idle 
  *   
- *   @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
+ * @author Jaroslav Keznikl <keznikl@d3s.mff.cuni.cz>
  */
 class Scheduler(
     /** The processes to be scheduled */
