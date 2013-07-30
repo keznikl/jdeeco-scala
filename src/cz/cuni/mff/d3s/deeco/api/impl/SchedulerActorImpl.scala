@@ -7,10 +7,10 @@ import akka.actor.ActorSystem
 import akka.actor.Props
 
 
-class SchedulerActorImpl(private val scheduler: ActorRef) extends Scheduler {
+class SchedulerActorImpl(val scheduler: ActorRef) extends Scheduler {
   
-  def this(system: ActorSystem) = 
-    this(system.actorOf(Props(
+  def this(system: ActorSystem) = this(
+      system.actorOf(Props(
         classOf[cz.cuni.mff.d3s.deeco.Scheduler],
         List()
         )))
