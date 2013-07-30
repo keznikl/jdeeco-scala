@@ -27,6 +27,7 @@ object Scheduler {
   case object Start
   case object Stop
   case object Tick
+  case class Schedule(val pi: ProcessInfo)
 }
 
 /**
@@ -58,7 +59,11 @@ class Scheduler(
   startWith(Scheduler.Idle, Empty)
 
   when(Scheduler.Idle) {
-    case Event(Scheduler.Start, _) => goto(Scheduler.Active)
+    case Event(Scheduler.Start, _) => 
+      goto(Scheduler.Active)
+    case Event(Scheduler.Schedule(pi: ProcessInfo), _) =>
+      processes ::= pi    
+      stay
   }
   when(Scheduler.Active) {
     case Event(Scheduler.Stop, _) => 
@@ -66,18 +71,29 @@ class Scheduler(
     case Event(Notify(process: ActorRef), _) => 
       process ! Scheduler.Tick 
       stay 
+    case Event(Scheduler.Schedule(pi: ProcessInfo), _) =>
+      processes ::= pi      
+      startTimerForProcess(pi)
+      stay
   }
-
+  
   onTransition {
     case Scheduler.Idle -> Scheduler.Active => 
-      processes.foreach(
-          p => setTimer("tick" + p.name, Notify(p.ref), Duration(p.period, MILLISECONDS), true))
+      processes.foreach(startTimerForProcess)
     case Scheduler.Active -> Scheduler.Idle => 
-      processes.foreach(
-          p => cancelTimer("tick" + p.name))
+      processes.foreach(cancelTimerForProcess)
     case x -> Scheduler.Idle => 
       log.info("entering Idle from " + x)
   }
+  
   initialize()
+  
+  def startTimerForProcess(p: ProcessInfo) = {
+    setTimer("tick" + p.name, Notify(p.ref), Duration(p.period, MILLISECONDS), true)
+  }
+  
+  def cancelTimerForProcess(p: ProcessInfo) = {
+    cancelTimer("tick" + p.name)
+  }
 
 }
